@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+  app:
+    build:
+      context: ./docker
+      dockerfile: "api.Dockerfile"
+    volumes:
+      - .:/app
+    ports:
+      - 3000:3000
+    depends_on:
+      db:
+        condition: "service_healthy"
+    environment:
+      TZ: "Asia/Tokyo"
+      APP_PORT: 3000
+      DB_PORT: 3306
+    command: bash -c "go mod tidy && go build -o app && ./app"
+  db:
+    build:
+      context: ./docker
+      dockerfile: db.Dockerfile
+    platform: linux/x86_64
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: judge
+      MYSQL_ROOT_PASSWORD: password
+
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+      start_period: 10s
+volumes:
+  mysql_data:
