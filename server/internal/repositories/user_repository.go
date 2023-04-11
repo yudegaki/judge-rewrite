@@ -11,8 +11,8 @@ type UserRepository struct {
 
 type User struct {
 	gorm.Model
-	Name     string `gorm:"type:varchar(50);not null"`
-	Password string `gorm:"type:varchar(100);not null"`
+	Name              string `gorm:"type:varchar(50);not null"`
+	EncryptedPassword string `gorm:"type:varchar(100);not null"`
 }
 
 func NewUserRepository(conn *gorm.DB) *UserRepository {

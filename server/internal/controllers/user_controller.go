@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"yudegaki.github.com/rewrite-judge/internal/db"
 	"yudegaki.github.com/rewrite-judge/internal/entities"
+	"yudegaki.github.com/rewrite-judge/internal/external"
 	"yudegaki.github.com/rewrite-judge/internal/repositories"
 	"yudegaki.github.com/rewrite-judge/internal/usecases"
 )
@@ -29,10 +29,8 @@ func convertEntityUsersToControllerUsers(entityUsers []*entities.User) []*UserRe
 }
 
 func GetAllUsers(c *gin.Context) {
-	repository := repositories.NewUserRepository(db.DB)
-	println("ok, repo")
+	repository := repositories.NewUserRepository(external.DB)
 	usecase := usecases.NewGetUsersUsecase(repository)
-	println("ok, usecase")
 
 	result, err := usecase.Execute()
 	if err != nil {
@@ -40,7 +38,5 @@ func GetAllUsers(c *gin.Context) {
 		return
 	}
 	resp := convertEntityUsersToControllerUsers(result)
-	println("ok, resp")
-
 	c.JSON(200, resp)
 }

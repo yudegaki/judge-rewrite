@@ -1,4 +1,4 @@
-package middleware
+package middlewares
 
 import (
 	"github.com/gin-gonic/gin"
@@ -10,7 +10,14 @@ func Router(r *gin.Engine) {
 		c.String(200, "Hello World!")
 	})
 
-	r.GET("/users", controllers.GetAllUsers)
-	// r.GET("/users/:id", controllers.GetUser)
+	authenticated := r.Group("/api", isAuthenticated())
+	{
+		authenticated.GET("/users", controllers.GetAllUsers)
+		// authenticated.GET("/users/:id", controllers.GetUser)
+	}
+
+	r.POST("/register", SignUp)
+	r.POST("/login", SignIn)
+	r.GET("/signout", SignOut)
 
 }
